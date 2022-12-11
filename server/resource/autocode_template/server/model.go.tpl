@@ -11,11 +11,17 @@ type {{.StructName}} struct {
       global.GVA_MODEL {{- range .Fields}}
             {{- if eq .FieldType "enum" }}
       {{.FieldName}}  string `json:"{{.FieldJson}}" form:"{{.FieldJson}}" gorm:"column:{{.ColumnName}};type:enum({{.DataTypeLong}});comment:{{.Comment}};"`
+            {{- else if eq .FieldType "fuwenben" }}
+      {{.FieldName}}  *string `json:"{{.FieldJson}}" form:"{{.FieldJson}}" gorm:"column:{{.ColumnName}};comment:{{.Comment}};type:text;"`
+            {{- else if eq .FieldType "multipic" }}
+      {{.FieldName}}  *string `json:"{{.FieldJson}}" form:"{{.FieldJson}}" gorm:"column:{{.ColumnName}};comment:{{.Comment}};type:text;"`
+            {{- else if eq .FieldType "pic" }}
+      {{.FieldName}}  *string `json:"{{.FieldJson}}" form:"{{.FieldJson}}" gorm:"column:{{.ColumnName}};comment:{{.Comment}};size:256;"`
             {{- else if ne .FieldType "string" }}
       {{.FieldName}}  *{{.FieldType}} `json:"{{.FieldJson}}" form:"{{.FieldJson}}" gorm:"column:{{.ColumnName}};comment:{{.Comment}};{{- if .DataTypeLong -}}size:{{.DataTypeLong}};{{- end -}}"`
             {{- else }}
       {{.FieldName}}  {{.FieldType}} `json:"{{.FieldJson}}" form:"{{.FieldJson}}" gorm:"column:{{.ColumnName}};comment:{{.Comment}};{{- if .DataTypeLong -}}size:{{.DataTypeLong}};{{- end -}}"`
-            {{- end }} {{- end }}
+            {{- end }}  {{- end }}
       {{- if .AutoCreateResource }}
       CreatedBy  uint   `gorm:"column:created_by;comment:创建者"`
       UpdatedBy  uint   `gorm:"column:updated_by;comment:更新者"`

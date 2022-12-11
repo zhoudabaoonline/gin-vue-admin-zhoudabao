@@ -30,6 +30,36 @@
           <el-option v-for="item in [{{ .DataTypeLong }}]" :key="item" :label="item" :value="item" />
         </el-select>
       {{- end }}
+
+  <!--自定义-->
+      {{- if eq .FieldType "fuwenben" }}
+        <el-select v-model="formData.{{ .FieldJson }}" placeholder="请选择" style="width:100%" :clearable="{{.Clearable}}">
+          <el-option v-for="item in [{{ .DataTypeLong }}]" :key="item" :label="item" :value="item" />
+        </el-select>
+      {{- end }}
+      {{- if eq .FieldType "multipic" }}
+        <UploadImageSelf
+            v-model:imageUrl="formData.{{ .FieldJson }}"
+            :file-size="512"
+            :max-w-h="1080"
+            class="upload-btn"
+            :multiple="true"
+            @on-success="(v)=>{formData.{{ .FieldJson }} = v}"
+        />
+      {{- end }}
+      {{- if eq .FieldType "pic" }}
+        <UploadImageSelf
+            v-model:imageUrl="formData.{{ .FieldJson }}"
+            :file-size="512"
+            :max-w-h="1080"
+            class="upload-btn"
+            :multiple="false"
+            :limit="1"
+            @on-success="(v)=>{formData.{{ .FieldJson }} = v}"
+        />
+      {{- end }}
+
+<!--自定义结束-->
         </el-form-item>
       {{- end }}
         <el-form-item>
@@ -54,11 +84,15 @@ import {
   find{{.StructName}}
 } from '@/api/{{.PackageName}}'
 
+import UploadImageSelf from '@/components/upload/imageself.vue'
+
 // 自动获取字典
 import { getDictFunc } from '@/utils/format'
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage } from 'element-plus'
+import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
 import { ref, reactive } from 'vue'
+
 const route = useRoute()
 const router = useRouter()
 
