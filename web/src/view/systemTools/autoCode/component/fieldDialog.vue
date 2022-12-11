@@ -1,14 +1,8 @@
 <template>
   <div>
     <warning-bar title="id , created_at , updated_at , deleted_at 会自动生成请勿重复创建。搜索时如果条件为LIKE只支持字符串" />
-    <el-form
-      ref="fieldDialogFrom"
-      :model="middleDate"
-      label-width="120px"
-      label-position="right"
-      :rules="rules"
-      class="grid-form"
-    >
+    <el-form ref="fieldDialogFrom" :model="middleDate" label-width="120px" label-position="right" :rules="rules"
+      class="grid-form">
       <el-form-item label="Field名称" prop="fieldName">
         <el-input v-model="middleDate.fieldName" autocomplete="off" style="width:80%" />
         <el-button size="small" style="width:18%;margin-left:2%" @click="autoFill">
@@ -28,57 +22,29 @@
         <el-input v-model="middleDate.comment" autocomplete="off" />
       </el-form-item>
       <el-form-item label="Field数据类型" prop="fieldType">
-        <el-select
-          v-model="middleDate.fieldType"
-          style="width:100%"
-          placeholder="请选择field数据类型"
-          clearable
-          @change="clearOther"
-        >
-          <el-option
-            v-for="item in typeOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
+        <el-select v-model="middleDate.fieldType" style="width:100%" placeholder="请选择field数据类型" clearable
+          @change="clearOther">
+          <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item :label="middleDate.fieldType === 'enum' ? '枚举值' : '类型长度'" prop="dataTypeLong">
-        <el-input v-model="middleDate.dataTypeLong" :placeholder="middleDate.fieldType === 'enum'?`例:'北京','天津'`:'数据库类型长度'" />
+        <el-input v-model="middleDate.dataTypeLong"
+          :placeholder="middleDate.fieldType === 'enum' ? `例:'北京','天津'` : '数据库类型长度'" />
       </el-form-item>
       <el-form-item label="Field查询条件" prop="fieldSearchType">
-        <el-select
-          v-model="middleDate.fieldSearchType"
-          style="width:100%"
-          placeholder="请选择Field查询条件"
-          clearable
-        >
-          <el-option
-            v-for="item in typeSearchOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+        <el-select v-model="middleDate.fieldSearchType" style="width:100%" placeholder="请选择Field查询条件" clearable>
+          <el-option v-for="item in typeSearchOptions" :key="item.value" :label="item.label" :value="item.value"
             :disabled="
-              (middleDate.fieldType!=='string'&&item.value==='LIKE')||
-                ((middleDate.fieldType!=='int'&&middleDate.fieldType!=='time.Time'&&middleDate.fieldType!=='float64')&&(item.value==='BETWEEN' || item.value==='NOT BETWEEN'))
-            "
-          />
+              (middleDate.fieldType !== 'string' && item.value === 'LIKE') ||
+              ((middleDate.fieldType !== 'int' && middleDate.fieldType !== 'time.Time' && middleDate.fieldType !== 'float64') && (item.value === 'BETWEEN' || item.value === 'NOT BETWEEN'))
+            " />
         </el-select>
       </el-form-item>
       <el-form-item label="关联字典" prop="dictType">
-        <el-select
-          v-model="middleDate.dictType"
-          style="width:100%"
-          :disabled="middleDate.fieldType!=='int'"
-          placeholder="请选择字典"
-          clearable
-        >
-          <el-option
-            v-for="item in dictOptions"
-            :key="item.type"
-            :label="`${item.type}(${item.name})`"
-            :value="item.type"
-          />
+        <el-select v-model="middleDate.dictType" style="width:100%" :disabled="middleDate.fieldType !== 'int'"
+          placeholder="请选择字典" clearable>
+          <el-option v-for="item in dictOptions" :key="item.type" :label="`${item.type}(${item.name})`"
+            :value="item.type" />
         </el-select>
       </el-form-item>
       <el-form-item label="是否排序">
@@ -107,7 +73,7 @@ import { ref } from 'vue'
 const props = defineProps({
   dialogMiddle: {
     type: Object,
-    default: function() {
+    default: function () {
       return {}
     }
   }
@@ -169,6 +135,18 @@ const typeOptions = ref([
   {
     label: '枚举',
     value: 'enum'
+  },
+  {
+    label: '富文本',
+    value: 'fuwenben'
+  },
+  {
+    label: '多图',
+    value: 'multipic'
+  },
+  {
+    label: '单图',
+    value: 'pic'
   }
 ])
 const rules = ref({
@@ -189,7 +167,7 @@ const rules = ref({
   ]
 })
 
-const init = async() => {
+const init = async () => {
   middleDate.value = props.dialogMiddle
   const dictRes = await getSysDictionaryList({
     page: 1,
@@ -221,11 +199,12 @@ export default {
 }
 </script>
 <style scoped>
-.grid-form{
+.grid-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
-.click-text{
+
+.click-text {
   color: #0d84ff;
   font-size: 13px;
   cursor: pointer;
