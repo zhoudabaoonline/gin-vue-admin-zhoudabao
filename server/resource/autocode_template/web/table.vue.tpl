@@ -139,16 +139,19 @@
       {{- if eq .FieldType "bool" }}
           <el-switch v-model="formData.{{.FieldJson}}" active-color="#13ce66" inactive-color="#ff4949" active-text="是" inactive-text="否" clearable ></el-switch>
       {{- end }}
-      
-      <!--自定义开始-->
+<!--自定义-->
+      {{ if eq .FieldType "fuwenben" }}
+        <Editor v-model="formData.{{ .FieldJson }}" />
+        <div style="display:none" v-html="formData.{{ .FieldJson }}" />
+      {{- end }}
       {{- if eq .FieldType "multipic" }}
         <UploadImageSelf
             v-model:imageUrl="formData.{{ .FieldJson }}"
             :file-size="512"
             :max-w-h="1080"
-            :multiple="true"
             class="upload-btn"
-            @on-success="(v) => { formData.{{ .FieldJson }} = v }"
+            :multiple="true"
+            @on-success="(v)=>{formData.{{ .FieldJson }} = v}"
         />
       {{- end }}
       {{- if eq .FieldType "pic" }}
@@ -156,14 +159,13 @@
             v-model:imageUrl="formData.{{ .FieldJson }}"
             :file-size="512"
             :max-w-h="1080"
-            :multiple="false"
             class="upload-btn"
+            :multiple="false"
             :limit="1"
-            @on-success="(v) => { formData.{{ .FieldJson }} = v }"
+            @on-success="(v)=>{formData.{{ .FieldJson }} = v}"
         />
       {{- end }}
-      <!--自定义结束-->
-
+<!--自定义结束-->
       {{- if eq .FieldType "string" }}
           <el-input v-model="formData.{{.FieldJson}}" :clearable="{{.Clearable}}"  placeholder="请输入" />
       {{- end }}
@@ -218,6 +220,7 @@ import {
 
 //不管用不用,先给他全局引入了再议
 import UploadImageSelf from '@/components/upload/imageself.vue'
+import Editor from '@/components/fuwenben/index.vue'
 
 
 // 全量引入格式化工具 请按需保留

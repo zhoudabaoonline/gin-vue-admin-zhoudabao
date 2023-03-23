@@ -253,7 +253,6 @@ func makeDictTypes(autoCode *system.AutoCodeStruct) {
 //@return: err error
 
 func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruct, ids ...uint) (err error) {
-
 	makeDictTypes(&autoCode)
 	for i := range autoCode.Fields {
 		if autoCode.Fields[i].FieldType == "time.Time" {
@@ -308,26 +307,31 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 	bf := strings.Builder{}
 	idBf := strings.Builder{}
 	injectionCodeMeta := strings.Builder{}
+
 	for _, id := range ids {
 		idBf.WriteString(strconv.Itoa(int(id)))
 		idBf.WriteString(";")
 	}
+
 	if autoCode.AutoMoveFile { // 判断是否需要自动转移
 		Init(autoCode.Package)
 		for index := range dataList {
 			autoCodeService.addAutoMoveFile(&dataList[index])
 		}
+
 		// 判断目标文件是否都可以移动
 		for _, value := range dataList {
 			if utils.FileExist(value.autoMoveFilePath) {
 				return errors.New(fmt.Sprintf("目标文件已存在:%s\n", value.autoMoveFilePath))
 			}
 		}
+
 		for _, value := range dataList { // 移动文件
 			if err := utils.FileMove(value.autoCodePath, value.autoMoveFilePath); err != nil {
 				return err
 			}
 		}
+
 		// 注入代码,创建包以后要在整个系统当中执行注入,
 		// fmt.Println(autoCode.StructName, "autoCode.StructName")
 		// CeshiStruct autoCode.StructName
@@ -345,7 +349,6 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 		}
 		var gormQueryPath = filepath.Join(global.GVA_CONFIG.AutoCode.Root,
 			global.GVA_CONFIG.AutoCode.Server, global.GVA_CONFIG.AutoCode.SInitialize, "gorm_query.go")
-
 		var gormPath = filepath.Join(global.GVA_CONFIG.AutoCode.Root,
 			global.GVA_CONFIG.AutoCode.Server, global.GVA_CONFIG.AutoCode.SInitialize, "gorm.go")
 		var routePath = filepath.Join(global.GVA_CONFIG.AutoCode.Root,
@@ -360,6 +363,7 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 		_ = ImportReference(gormQueryPath, imporStr, "", "", "")
 
 	} else { // 打包
+
 		if err = utils.ZipFiles("./ginvueadmin.zip", fileList, ".", "."); err != nil {
 			return err
 		}

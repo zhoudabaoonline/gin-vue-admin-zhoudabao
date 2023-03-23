@@ -16,34 +16,49 @@ import (
 )
 
 var (
-	Q      = new(Query)
-	Ceshi4 *ceshi4
+	Q       = new(Query)
+	Strcut3 *strcut3
+	Struct1 *struct1
+	Struct2 *struct2
+	Struct4 *struct4
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
-	Ceshi4 = &Q.Ceshi4
+	Strcut3 = &Q.Strcut3
+	Struct1 = &Q.Struct1
+	Struct2 = &Q.Struct2
+	Struct4 = &Q.Struct4
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:     db,
-		Ceshi4: newCeshi4(db, opts...),
+		db:      db,
+		Strcut3: newStrcut3(db, opts...),
+		Struct1: newStruct1(db, opts...),
+		Struct2: newStruct2(db, opts...),
+		Struct4: newStruct4(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	Ceshi4 ceshi4
+	Strcut3 strcut3
+	Struct1 struct1
+	Struct2 struct2
+	Struct4 struct4
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:     db,
-		Ceshi4: q.Ceshi4.clone(db),
+		db:      db,
+		Strcut3: q.Strcut3.clone(db),
+		Struct1: q.Struct1.clone(db),
+		Struct2: q.Struct2.clone(db),
+		Struct4: q.Struct4.clone(db),
 	}
 }
 
@@ -57,18 +72,27 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:     db,
-		Ceshi4: q.Ceshi4.replaceDB(db),
+		db:      db,
+		Strcut3: q.Strcut3.replaceDB(db),
+		Struct1: q.Struct1.replaceDB(db),
+		Struct2: q.Struct2.replaceDB(db),
+		Struct4: q.Struct4.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	Ceshi4 ICeshi4Do
+	Strcut3 IStrcut3Do
+	Struct1 IStruct1Do
+	Struct2 IStruct2Do
+	Struct4 IStruct4Do
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		Ceshi4: q.Ceshi4.WithContext(ctx),
+		Strcut3: q.Strcut3.WithContext(ctx),
+		Struct1: q.Struct1.WithContext(ctx),
+		Struct2: q.Struct2.WithContext(ctx),
+		Struct4: q.Struct4.WithContext(ctx),
 	}
 }
 
