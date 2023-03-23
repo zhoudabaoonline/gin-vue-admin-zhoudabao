@@ -139,6 +139,7 @@
       {{- if eq .FieldType "bool" }}
           <el-switch v-model="formData.{{.FieldJson}}" active-color="#13ce66" inactive-color="#ff4949" active-text="是" inactive-text="否" clearable ></el-switch>
       {{- end }}
+      
       <!--自定义开始-->
       {{- if eq .FieldType "multipic" }}
         <UploadImageSelf
@@ -161,10 +162,8 @@
             @on-success="(v) => { formData.{{ .FieldJson }} = v }"
         />
       {{- end }}
-
-
-
       <!--自定义结束-->
+
       {{- if eq .FieldType "string" }}
           <el-input v-model="formData.{{.FieldJson}}" :clearable="{{.Clearable}}"  placeholder="请输入" />
       {{- end }}

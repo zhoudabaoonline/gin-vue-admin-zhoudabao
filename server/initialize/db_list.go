@@ -1,6 +1,8 @@
 package initialize
 
 import (
+	"fmt"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/config"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"gorm.io/gorm"
@@ -30,5 +32,6 @@ func DBList() {
 	if sysDB, ok := dbMap[sys]; ok {
 		global.GVA_DB = sysDB
 	}
+	fmt.Println(dbMap)
 	global.GVA_DBList = dbMap
 }

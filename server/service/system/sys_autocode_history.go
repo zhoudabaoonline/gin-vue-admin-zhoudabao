@@ -3,11 +3,12 @@ package system
 import (
 	"errors"
 	"fmt"
-	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
+
+	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
 
@@ -68,7 +69,6 @@ func (autoCodeHistoryService *AutoCodeHistoryService) RollBack(info *systemReq.R
 		return err
 	}
 	// 清除API表
-
 	ids := request.IdsReq{}
 	idsStr := strings.Split(md.ApiIDs, ";")
 	for i := range idsStr[0 : len(idsStr)-1] {
@@ -78,18 +78,21 @@ func (autoCodeHistoryService *AutoCodeHistoryService) RollBack(info *systemReq.R
 		}
 		ids.Ids = append(ids.Ids, id)
 	}
+
+	// 删除api
 	err := ApiServiceApp.DeleteApisByIds(ids)
 	if err != nil {
 		global.GVA_LOG.Error("ClearTag DeleteApiByIds:", zap.Error(err))
+		return err
 	}
-	// 删除表
+
+	// 删除业务表
 	if info.DeleteTable {
 		if err = AutoCodeServiceApp.DropTable(md.BusinessDB, md.TableName); err != nil {
 			global.GVA_LOG.Error("ClearTag DropTable:", zap.Error(err))
 		}
 	}
 	// 删除文件
-
 	for _, path := range strings.Split(md.AutoCodePath, ";") {
 
 		// 增加安全判断补丁:

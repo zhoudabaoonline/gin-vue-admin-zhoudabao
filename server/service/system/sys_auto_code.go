@@ -56,12 +56,20 @@ var (
 	caser               = cases.Title(language.English)
 )
 
+// 需要注入的文件的路径
 func Init(Package string) {
 	injectionPaths = []injectionMeta{
 		{
 			path: filepath.Join(global.GVA_CONFIG.AutoCode.Root,
 				global.GVA_CONFIG.AutoCode.Server, global.GVA_CONFIG.AutoCode.SInitialize, "gorm.go"),
 			funcName:    "MysqlTables",
+			structNameF: Package + ".%s{},",
+		},
+		// 后期自己加的,用来生成gorm的查询对象,方便开发
+		{
+			path: filepath.Join(global.GVA_CONFIG.AutoCode.Root,
+				global.GVA_CONFIG.AutoCode.Server, global.GVA_CONFIG.AutoCode.SInitialize, "gorm_query.go"),
+			funcName:    "Query",
 			structNameF: Package + ".%s{},",
 		},
 		{
@@ -151,6 +159,7 @@ var AutoCodeServiceApp = new(AutoCodeService)
 //@return: map[string]string, error
 
 func (autoCodeService *AutoCodeService) PreviewTemp(autoCode system.AutoCodeStruct) (map[string]string, error) {
+	// 字典类型处理
 	makeDictTypes(&autoCode)
 	for i := range autoCode.Fields {
 		if autoCode.Fields[i].FieldType == "time.Time" {
@@ -244,10 +253,16 @@ func makeDictTypes(autoCode *system.AutoCodeStruct) {
 //@return: err error
 
 func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruct, ids ...uint) (err error) {
+
 	makeDictTypes(&autoCode)
 	for i := range autoCode.Fields {
 		if autoCode.Fields[i].FieldType == "time.Time" {
 			autoCode.HasTimer = true
+			break
+		}
+		// 多图,json类型
+		if autoCode.Fields[i].FieldType == "multipic" || autoCode.Fields[i].FieldType == "json" {
+			autoCode.HasMultiPic = true
 			break
 		}
 		if autoCode.Fields[i].Require {
@@ -313,10 +328,14 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 				return err
 			}
 		}
+		// 注入代码,创建包以后要在整个系统当中执行注入,
+		// fmt.Println(autoCode.StructName, "autoCode.StructName")
+		// CeshiStruct autoCode.StructName
 		err = injectionCode(autoCode.StructName, &injectionCodeMeta)
 		if err != nil {
 			return
 		}
+
 		// 保存生成信息
 		for _, data := range dataList {
 			if len(data.autoMoveFilePath) != 0 {
@@ -324,20 +343,28 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 				bf.WriteString(";")
 			}
 		}
+		var gormQueryPath = filepath.Join(global.GVA_CONFIG.AutoCode.Root,
+			global.GVA_CONFIG.AutoCode.Server, global.GVA_CONFIG.AutoCode.SInitialize, "gorm_query.go")
 
 		var gormPath = filepath.Join(global.GVA_CONFIG.AutoCode.Root,
 			global.GVA_CONFIG.AutoCode.Server, global.GVA_CONFIG.AutoCode.SInitialize, "gorm.go")
 		var routePath = filepath.Join(global.GVA_CONFIG.AutoCode.Root,
 			global.GVA_CONFIG.AutoCode.Server, global.GVA_CONFIG.AutoCode.SInitialize, "router.go")
 		var imporStr = fmt.Sprintf("github.com/flipped-aurora/gin-vue-admin/server/model/%s", autoCode.Package)
+
+		// 给新生成的代码引入必要的包文件
 		_ = ImportReference(routePath, "", "", autoCode.Package, "")
+
 		_ = ImportReference(gormPath, imporStr, "", "", "")
+
+		_ = ImportReference(gormQueryPath, imporStr, "", "", "")
 
 	} else { // 打包
 		if err = utils.ZipFiles("./ginvueadmin.zip", fileList, ".", "."); err != nil {
 			return err
 		}
 	}
+
 	if autoCode.AutoMoveFile || autoCode.AutoCreateApiToSql {
 		if autoCode.TableName != "" {
 			err = AutoCodeHistoryServiceApp.CreateAutoCodeHistory(
@@ -363,6 +390,7 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 			)
 		}
 	}
+
 	if err != nil {
 		return err
 	}
@@ -402,7 +430,7 @@ func (autoCodeService *AutoCodeService) GetAllTplFile(pathName string, fileList 
 //@return: err error, Columns []request.ColumnReq
 
 func (autoCodeService *AutoCodeService) DropTable(BusinessDb, tableName string) error {
-	if BusinessDb != "" {
+	if BusinessDb == "" {
 		return global.GVA_DB.Exec("DROP TABLE " + tableName).Error
 	} else {
 		return global.MustGetGlobalDBByDBName(BusinessDb).Exec("DROP TABLE " + tableName).Error
@@ -541,6 +569,7 @@ func (autoCodeService *AutoCodeService) getNeedList(autoCode *system.AutoCodeStr
 			return nil, nil, nil, err
 		}
 	}
+
 	// 生成文件路径，填充 autoCodePath 字段，readme.txt.tpl不符合规则，需要特殊处理
 	// resource/template/web/api.js.tpl -> autoCode/web/autoCode.PackageName/api/autoCode.PackageName.js
 	// resource/template/readme.txt.tpl -> autoCode/readme.txt
@@ -579,6 +608,7 @@ func (autoCodeService *AutoCodeService) getNeedList(autoCode *system.AutoCodeStr
 
 // injectionCode 封装代码注入
 func injectionCode(structName string, bf *strings.Builder) error {
+	// 遍历所有的需要注入的代码文件
 	for _, meta := range injectionPaths {
 		code := fmt.Sprintf(meta.structNameF, structName)
 		if err := utils.AutoInjectionCode(meta.path, meta.funcName, code); err != nil {
@@ -815,6 +845,7 @@ func ImportReference(filepath, importCode, structName, packageName, groupName st
 		GroupName:   groupName,
 	}
 	if importCode == "" {
+		// 打印写入源码文件的ast 信息
 		ast.Print(fSet, fParser)
 	}
 
@@ -841,6 +872,7 @@ func (autoCodeService *AutoCodeService) CreatePlug(plug system.AutoPlugReq) erro
 			zap.L().Error("parse err", zap.String("tpl", tpl), zap.Error(err))
 			return err
 		}
+		// SplitAfter分割以后在分割的串后面添加sep
 		pathArr := strings.SplitAfter(tpl, "/")
 		if strings.Index(pathArr[2], "tpl") < 0 {
 			dirPath := filepath.Join(global.GVA_CONFIG.AutoCode.Root, global.GVA_CONFIG.AutoCode.Server, fmt.Sprintf(global.GVA_CONFIG.AutoCode.SPlug, plug.Snake+"/"+pathArr[2]))

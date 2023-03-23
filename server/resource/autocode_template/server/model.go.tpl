@@ -4,6 +4,9 @@ package {{.Package}}
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	{{ if .HasTimer }}"time"{{ end }}
+      {{- if .HasMultiPic }}
+	"github.com/flipped-aurora/gin-vue-admin/server/model/globalModel"
+      {{- end -}}
 )
 
 // {{.StructName}} 结构体
@@ -14,7 +17,7 @@ type {{.StructName}} struct {
             {{- else if eq .FieldType "fuwenben" }}
       {{.FieldName}}  *string `json:"{{.FieldJson}}" form:"{{.FieldJson}}" gorm:"column:{{.ColumnName}};comment:{{.Comment}};type:text;"`
             {{- else if eq .FieldType "multipic" }}
-      {{.FieldName}}  *string `json:"{{.FieldJson}}" form:"{{.FieldJson}}" gorm:"column:{{.ColumnName}};comment:{{.Comment}};type:text;"`
+      {{.FieldName}}  globalModel.MultiPic `json:"{{.FieldJson}}" form:"{{.FieldJson}}" gorm:"column:{{.ColumnName}};comment:{{.Comment}};type:json;"`
             {{- else if eq .FieldType "pic" }}
       {{.FieldName}}  *string `json:"{{.FieldJson}}" form:"{{.FieldJson}}" gorm:"column:{{.ColumnName}};comment:{{.Comment}};size:256;"`
             {{- else if ne .FieldType "string" }}
@@ -29,9 +32,9 @@ type {{.StructName}} struct {
       {{- end}}
 }
 
-{{ if .TableName }}
+{{- if .TableName }}
 // TableName {{.StructName}} 表名
 func ({{.StructName}}) TableName() string {
-  return "{{.TableName}}"
+      return "{{.TableName}}"
 }
 {{ end }}

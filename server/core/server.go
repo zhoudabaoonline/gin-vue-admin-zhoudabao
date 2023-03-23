@@ -25,6 +25,7 @@ func RunWindowsServer() {
 		system.LoadAll()
 	}
 
+	// 注册路由
 	Router := initialize.Routers()
 	Router.Static("/form-generator", "./resource/page")
 

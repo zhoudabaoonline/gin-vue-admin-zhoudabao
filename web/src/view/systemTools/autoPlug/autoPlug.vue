@@ -3,7 +3,7 @@
     <div class="gva-table-box">
       <el-form label-width="140px" class="plug-form">
         <el-form-item label="插件名">
-          <el-input v-model="form.plugName" placeholder="必填（英文大写字母开头）" @blur="titleCase" />
+          <el-input v-model="form.plugName" placeholder="必填（因要给其他的包使用,因此英文大写字母开头）" @blur="titleCase" />
         </el-form-item>
         <el-form-item label="路由组">
           <el-input v-model="form.routerGroup" placeholder="将会作为插件路由组使用" />
@@ -12,7 +12,7 @@
           <el-checkbox v-model="form.hasGlobal" />
         </el-form-item>
         <el-form-item v-if="form.hasGlobal" label="全局属性">
-          <div v-for="(i,k) in form.global" :key="k" class="plug-row">
+          <div v-for="(i, k) in form.global" :key="k" class="plug-row">
             <span>
               <el-input v-model="i.key" placeholder="key 必填" />
             </span>
@@ -32,7 +32,13 @@
               <el-button :icon="Plus" circle @click="addkv(form.global)" />
             </span>
             <span>
-              <el-button :icon="Minus" circle @click="minkv(form.global,k)" />
+              <el-button :icon="Minus" circle @click="minkv(form.global, k)" />
+            </span>
+
+          </div>
+          <div>
+            <span>
+              (因要给其他的包使用,因此`key`英文大写字母开头)
             </span>
           </div>
         </el-form-item>
@@ -40,7 +46,7 @@
           <el-checkbox v-model="form.hasRequest" />
         </el-form-item>
         <el-form-item v-if="form.hasRequest" label="Request">
-          <div v-for="(i,k) in form.request" :key="k" class="plug-row">
+          <div v-for="(i, k) in form.request" :key="k" class="plug-row">
             <span>
               <el-input v-model="i.key" placeholder="key 必填" />
             </span>
@@ -60,7 +66,7 @@
               <el-button :icon="Plus" circle @click="addkv(form.request)" />
             </span>
             <span>
-              <el-button :icon="Minus" circle @click="minkv(form.request,k)" />
+              <el-button :icon="Minus" circle @click="minkv(form.request, k)" />
             </span>
           </div>
         </el-form-item>
@@ -68,7 +74,7 @@
           <el-checkbox v-model="form.hasResponse" />
         </el-form-item>
         <el-form-item v-if="form.hasResponse" label="Response">
-          <div v-for="(i,k) in form.response" :key="k" class="plug-row">
+          <div v-for="(i, k) in form.response" :key="k" class="plug-row">
             <span>
               <el-input v-model="i.key" placeholder="key 必填" />
             </span>
@@ -88,7 +94,7 @@
               <el-button :icon="Plus" circle @click="addkv(form.response)" />
             </span>
             <span>
-              <el-button :icon="Minus" circle @click="minkv(form.response,k)" />
+              <el-button :icon="Minus" circle @click="minkv(form.response, k)" />
             </span>
           </div>
         </el-form-item>
@@ -141,7 +147,7 @@ const titleCase = () => {
   form.plugName = toUpperCase(form.plugName)
 }
 
-const createPlug = async() => {
+const createPlug = async () => {
   if (!form.plugName || !form.routerGroup) {
     ElMessage.error('插件名称和插件路由组为必填项')
     return
@@ -203,18 +209,23 @@ const minkv = (arr, key) => {
 </script>
 
 <style lang="scss" scoped>
-        .plug-form{
-            width: 680px;
-        }
-    .plug-row{
-        display: flex;
-        align-items: center;
-        width: 100%;
-        &+&{
-            margin-top: 12px;
-        }
-        &>span{
-            margin-left: 8px;
-        }
-    }
+.plug-form {
+  width: 980px;
+  display: flex;
+  flex-direction: column;
+}
+
+.plug-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  &+& {
+    margin-top: 12px;
+  }
+
+  &>span {
+    margin-left: 8px;
+  }
+}
 </style>

@@ -70,6 +70,7 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 		response.FailWithMessage("获取token失败", c)
 		return
 	}
+	//如果是单点登录,那么直接走代码
 	if !global.GVA_CONFIG.System.UseMultipoint {
 		response.OkWithDetailed(systemRes.LoginResponse{
 			User:      user,
@@ -79,6 +80,7 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 		return
 	}
 
+	// 多点登录,使用redis
 	if jwtStr, err := jwtService.GetRedisJWT(user.Username); err == redis.Nil {
 		if err := jwtService.SetRedisJWT(token, user.Username); err != nil {
 			global.GVA_LOG.Error("设置登录状态失败!", zap.Error(err))

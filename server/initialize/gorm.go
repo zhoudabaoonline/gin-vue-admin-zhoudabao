@@ -6,7 +6,6 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/example"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -58,5 +57,6 @@ func RegisterTables(db *gorm.DB) {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
 		os.Exit(0)
 	}
+
 	global.GVA_LOG.Info("register table success")
 }

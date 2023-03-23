@@ -3,6 +3,7 @@ package system
 import (
 	"errors"
 	"fmt"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
@@ -179,9 +180,10 @@ func (apiService *ApiService) DeleteApisByIds(ids request.IdsReq) (err error) {
 		return err
 	} else {
 		for _, sysApi := range apis {
+			// 删除casbin规则
 			success := CasbinServiceApp.ClearCasbin(1, sysApi.Path, sysApi.Method)
 			if !success {
-				return errors.New(sysApi.Path + ":" + sysApi.Method + "casbin同步清理失败")
+				return errors.New(sysApi.Path + ":" + sysApi.Method + ";casbin同步清理失败")
 			}
 		}
 		e := CasbinServiceApp.Casbin()

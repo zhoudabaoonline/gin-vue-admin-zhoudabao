@@ -6,6 +6,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"log"
 	"os"
 	"strings"
 )
@@ -108,9 +109,11 @@ func AutoInjectionCode(filepath string, funcName string, codeData string) error 
 	// 插入数据
 	indexPos := endCommentPos - 1
 	insertData := []byte(append([]byte(codeData+"\n"), reverseSpace...))
-
+	fmt.Println(string(insertData), "------------------------------------------")
 	remainData := append([]byte{}, srcData[indexPos:]...)
+	fmt.Println(string(remainData), "------------------------------------------")
 	srcData = append(append(srcData[:indexPos], insertData...), remainData...)
+	log.Fatal(string(srcData), "------------------------------------------")
 
 	// 写回数据
 	return os.WriteFile(filepath, srcData, 0o600)

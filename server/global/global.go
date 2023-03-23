@@ -1,6 +1,7 @@
 package global
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/utils/timer"
@@ -43,6 +44,8 @@ func GetGlobalDBByDBName(dbname string) *gorm.DB {
 func MustGetGlobalDBByDBName(dbname string) *gorm.DB {
 	lock.RLock()
 	defer lock.RUnlock()
+
+	fmt.Println(GVA_DBList, dbname, "dbnamedbnamedbnamedbnamedbnamedbnamedbnamedbnamedbnamedbnamedbname")
 	db, ok := GVA_DBList[dbname]
 	if !ok || db == nil {
 		panic("db no init")

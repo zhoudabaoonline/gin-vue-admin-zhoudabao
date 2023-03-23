@@ -1,6 +1,8 @@
 package system
 
 import (
+	"fmt"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/config"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
@@ -29,6 +31,7 @@ func (systemConfigService *SystemConfigService) GetSystemConfig() (conf config.S
 func (systemConfigService *SystemConfigService) SetSystemConfig(system system.System) (err error) {
 	cs := utils.StructToMap(system.Config)
 	for k, v := range cs {
+		fmt.Println(k, v)
 		global.GVA_VP.Set(k, v)
 	}
 	err = global.GVA_VP.WriteConfig()

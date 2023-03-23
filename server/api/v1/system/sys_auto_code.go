@@ -78,6 +78,7 @@ func (autoApi *AutoCodeApi) CreateTemp(c *gin.Context) {
 		}
 	}
 	a.PackageT = caser.String(a.Package)
+	// 创建模板文件
 	err := autoCodeService.CreateTemp(a, apiIds...)
 	if err != nil {
 		if errors.Is(err, system.ErrAutoMove) {

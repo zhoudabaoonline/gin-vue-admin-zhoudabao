@@ -34,5 +34,7 @@ func main() {
 		db, _ := global.GVA_DB.DB()
 		defer db.Close()
 	}
+	// 创建查询对象
+	initialize.GenQuery()
 	core.RunWindowsServer()
 }

@@ -2,6 +2,9 @@ package system
 
 import (
 	"errors"
+	"strconv"
+	"sync"
+
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
@@ -9,8 +12,6 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	_ "github.com/go-sql-driver/mysql"
 	"go.uber.org/zap"
-	"strconv"
-	"sync"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -104,6 +105,7 @@ var (
 
 func (casbinService *CasbinService) Casbin() *casbin.CachedEnforcer {
 	once.Do(func() {
+		// 使用数据库来保存
 		a, _ := gormadapter.NewAdapterByDB(global.GVA_DB)
 		text := `
 		[request_definition]

@@ -22,6 +22,7 @@ type AutoCodeStruct struct {
 	BusinessDB         string   `json:"businessDB"`         // 业务数据库
 	Fields             []*Field `json:"fields,omitempty"`
 	HasTimer           bool
+	HasMultiPic        bool
 	DictTypes          []string `json:"-"`
 	Package            string   `json:"package"`
 	PackageT           string   `json:"-"`

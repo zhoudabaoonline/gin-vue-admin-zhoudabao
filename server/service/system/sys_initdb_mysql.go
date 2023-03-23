@@ -75,6 +75,7 @@ func (h MysqlInitHandler) InitTables(ctx context.Context, inits initSlice) error
 	return createTables(ctx, inits)
 }
 
+// 初始化数据
 func (h MysqlInitHandler) InitData(ctx context.Context, inits initSlice) error {
 	next, cancel := context.WithCancel(ctx)
 	defer func(c func()) { c() }(cancel)

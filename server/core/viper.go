@@ -3,10 +3,11 @@ package core
 import (
 	"flag"
 	"fmt"
-	"github.com/flipped-aurora/gin-vue-admin/server/core/internal"
-	"github.com/gin-gonic/gin"
 	"os"
 	"path/filepath"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/core/internal"
+	"github.com/gin-gonic/gin"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
@@ -18,6 +19,13 @@ import (
 // Viper //
 // 优先级: 命令行 > 环境变量 > 默认值
 // Author [SliverHorn](https://github.com/SliverHorn)
+
+// Viper 一个配置库,支持Yaml、Json、 TOML、HCL 等格式的配置
+// 1.  支持Yaml、Json、 TOML、HCL 等格式的配置
+// 2.  可以从文件、io、环境变量、command line中提取配置
+// 3.  支持自动转换的类型解析
+// 4.  可以远程从etcd中读取配置
+
 func Viper(path ...string) *viper.Viper {
 	var config string
 
@@ -60,6 +68,7 @@ func Viper(path ...string) *viper.Viper {
 
 	v.OnConfigChange(func(e fsnotify.Event) {
 		fmt.Println("config file changed:", e.Name)
+		// 反序列化到对象global.gva_config里面
 		if err = v.Unmarshal(&global.GVA_CONFIG); err != nil {
 			fmt.Println(err)
 		}
@@ -69,6 +78,7 @@ func Viper(path ...string) *viper.Viper {
 	}
 
 	// root 适配性 根据root位置去找到对应迁移位置,保证root路径有效
+	// 保存一份root路径,文件生成会根据root找对应的未知
 	global.GVA_CONFIG.AutoCode.Root, _ = filepath.Abs("..")
 	return v
 }

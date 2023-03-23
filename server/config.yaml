@@ -7,7 +7,7 @@ aliyun-oss:
   base-path: yourBasePath
 autocode:
   transfer-restart: true
-  root: D:\project\go\src\gin-vue-admin-zhoudabao
+  root: D:\project\gin-vue-admin-zhoudabao\gin-vue-admin-zhoudabao
   server: /server
   server-api: /api/v1/%s
   server-plug: /plugin/%s
@@ -31,7 +31,7 @@ aws-s3:
   base-url: https://gin.vue.admin
   path-prefix: github.com/flipped-aurora/gin-vue-admin/server
 captcha:
-  key-long: 6
+  key-long: 4
   img-width: 240
   img-height: 80
 cors:
@@ -83,7 +83,7 @@ hua-wei-obs:
   access-key: you-access-key
   secret-key: you-secret-key
 jwt:
-  signing-key: e875fd0d-f978-4dd8-a825-0555fb8db57e
+  signing-key: 46c406e8-c047-4087-b5ea-e3d8eb16f293
   expires-time: 7d
   buffer-time: 1d
   issuer: qmPlus
@@ -94,7 +94,7 @@ mysql:
   path: 192.168.1.33
   port: "3306"
   config: charset=utf8mb4&parseTime=True&loc=Local
-  db-name: gva
+  db-name: gva_backup
   username: root
   password: zm4228343
   prefix: ""
@@ -103,7 +103,7 @@ mysql:
   max-idle-conns: 10
   max-open-conns: 100
   log-mode: error
-  log-zap: false
+  log-zap: true
 oracle:
   path: ""
   port: ""
