@@ -5,10 +5,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"sort"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"gorm.io/gorm"
-	"sort"
 )
 
 const (
@@ -114,13 +115,17 @@ func (initDBService *InitDBService) InitDB(conf request.InitDB) (err error) {
 	db := ctx.Value("db").(*gorm.DB)
 	global.GVA_DB = db
 
+	// 建立表
 	if err = initHandler.InitTables(ctx, initializers); err != nil {
 		return err
 	}
+
+	// 初始化数据
 	if err = initHandler.InitData(ctx, initializers); err != nil {
 		return err
 	}
 
+	// 写配置文件
 	if err = initHandler.WriteConfig(ctx); err != nil {
 		return err
 	}
